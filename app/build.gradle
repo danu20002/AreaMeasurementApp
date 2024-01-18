@@ -42,6 +42,8 @@ dependencies {
     implementation "androidx.camera:camera-view:1.1.0-alpha08"
 
 
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
 
     def camerax_version = "1.4.0-alpha03"
     // The following line is optional, as the core library is included indirectly by camera-camera2

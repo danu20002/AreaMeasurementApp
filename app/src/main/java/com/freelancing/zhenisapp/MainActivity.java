@@ -1,22 +1,19 @@
 package com.freelancing.zhenisapp;
 
-import android.os.Build;
+import android.content.Context;
+import android.hardware.Camera;
 import android.os.Bundle;
-import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.camera.core.CameraSelector;
-import androidx.camera.core.Preview;
-import androidx.camera.lifecycle.ProcessCameraProvider;
 
 import com.freelancing.zhenisapp.R;
-import com.google.common.util.concurrent.ListenableFuture;
 
-public class MainActivity extends AppCompatActivity {
+import java.io.IOException;
 
-    private ListenableFuture<ProcessCameraProvider> cameraProviderFuture;
+public class MainActivity extends AppCompatActivity implements SurfaceHolder.Callback {
+
+    private Camera camera;
     private SurfaceView surfaceView;
 
     @Override
@@ -25,54 +22,35 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         surfaceView = findViewById(R.id.cameraSurfaceView);
-        cameraProviderFuture = ProcessCameraProvider.getInstance(this);
-
-        surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
-            @Override
-            public void surfaceCreated(@NonNull SurfaceHolder holder) {
-                startCamera();
-            }
-
-            @Override
-            public void surfaceChanged(@NonNull SurfaceHolder holder, int format, int width, int height) {
-                // Handle surface changes if needed
-            }
-
-            @Override
-            public void surfaceDestroyed(@NonNull SurfaceHolder holder) {
-                // Release camera resources if needed
-            }
-        });
+        SurfaceHolder surfaceHolder = surfaceView.getHolder();
+        surfaceHolder.addCallback(this);
     }
 
-    private void startCamera() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            cameraProviderFuture.addListener(() -> {
-                try {
-                    ProcessCameraProvider cameraProvider = cameraProviderFuture.get();
-
-                    // Set up the Preview use case
-                    Preview preview = new Preview.Builder().build();
-                    preview.setSurfaceProvider(holder -> {
-                        Surface surface = holder.getSurface();
-                        // Use the surface as needed
-                    });
-
-                    // Select the back camera as a default
-                    CameraSelector cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA;
-
-                    // Unbind any existing use cases before rebinding
-                    cameraProvider.unbindAll();
-
-                    // Bind the camera use cases to the preview
-                    cameraProvider.bindToLifecycle(this, cameraSelector, preview);
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }, getMainExecutor());
+    @Override
+    public void surfaceCreated(SurfaceHolder holder) {
+        // Open the camera when the surface is created
+        try {
+            camera = Camera.open();
+            camera.setDisplayOrientation(90);
+            camera.setPreviewDisplay(holder);
+            camera.startPreview();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
+    @Override
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+        // Handle surface changes if needed
+    }
 
+    @Override
+    public void surfaceDestroyed(SurfaceHolder holder) {
+        // Release camera resources when the surface is destroyed
+        if (camera != null) {
+            camera.stopPreview();
+            camera.release();
+            camera = null;
+        }
+    }
 }

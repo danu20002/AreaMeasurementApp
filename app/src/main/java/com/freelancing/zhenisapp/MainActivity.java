@@ -6,13 +6,14 @@ import android.os.Bundle;
 import android.view.TextureView;
 
 public class MainActivity extends AppCompatActivity {
+    Pre
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        TextureView textureView = findViewById(R.id.textureview);
+
 
     }
 }

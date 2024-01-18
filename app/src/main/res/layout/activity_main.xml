@@ -8,10 +8,11 @@
 <FrameLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-   <TextureView
-       android:layout_width="match_parent"
-       android:layout_height="match_parent"
-       android:id="@+id/textureview"/>
+    <androidx.camera.view.PreviewView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/preview"
+  />
 
 </FrameLayout>
 <LinearLayout
